@@ -1,0 +1,45 @@
+Transform: AWS::Serverless-2016-10-31
+
+# Globals:
+#   # set of globals
+
+# Description:
+#   # String
+
+# Metadata:
+#   # template metadata
+
+# Parameters:
+#   # set of parameters
+
+# Mappings:
+#   # set of mappings
+
+# Conditions:
+#   # set of conditions
+
+Resources:
+  # set of resources
+  TextProcessFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Handler for text processing
+      Handler: app.lambda_handler
+      CodeUri: src/
+      Runtime: python3.8
+      Events:
+        GetText:
+          Type: Api
+          Properties:
+            Path: /processText
+            Method: get
+  FileStorageBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: incognito-file-storage-bucket
+
+      
+    
+
+# Outputs:
+  # set of outputs
