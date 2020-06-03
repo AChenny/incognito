@@ -20,7 +20,7 @@ def startJob(s3BucketName, objectName):
 
 # Description: Periodically checks if the text detection job is complete and prints status
 # Input: Job id
-# Output: String of the status (When it is finished)/ TODO: (BOOLEAN(?) Check) 
+# Output: String of the status (When it is finished)/ Expected 'SUCCEEDED' if successful
 def isJobComplete(jobId):
     time.sleep(5)
     client = boto3.client('textract')
@@ -38,7 +38,7 @@ def isJobComplete(jobId):
 
 # Description: Gets the results from a text detection job
 # Input: Job id
-# Output: TODO: Array of page results 
+# Output: Block object with all the data in a mapping -> Refer to https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/textract.html
 def getJobResults(jobId):
 
     pages = []
