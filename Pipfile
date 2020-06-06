@@ -4,10 +4,10 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+ptvsd = "*"
 
 [packages]
 boto3 = "*"
-ptvsd = "*"
 
 [requires]
 python_version = "3.8"
