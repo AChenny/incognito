@@ -1,2 +1,6 @@
 .aws-sam
 samconfig.toml
+TestFiles/
+Pipfile.lock
+.aws/
+.vscode/

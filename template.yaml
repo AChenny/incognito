@@ -33,13 +33,30 @@ Resources:
           Properties:
             Path: /processText
             Method: get
+  UploadPdfApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Name: Upload PDF
+      BinaryMediaTypes:
+        ['application/pdf']
+  UploadPdfFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Handler for uploading a pdf
+      Handler: app.upload_handler
+      CodeUri: src/
+      Runtime: python3.8
+      Events:
+        UploadPdf:
+          Type: Api
+          Properties:
+            RestApiId: !Ref UploadPdfApi
+            Path: /uploadPdf
+            Method: PUT
   FileStorageBucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: incognito-file-storage-bucket
-
-      
-    
-
 # Outputs:
   # set of outputs
