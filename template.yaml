@@ -1,7 +1,12 @@
 Transform: AWS::Serverless-2016-10-31
 
-# Globals:
-#   # set of globals
+Globals:
+  # set of globals
+  Function:
+    Environment:
+      Variables:
+        # Change this to the bucket name of where you want to store your files
+        FILE_BUCKET_NAME: &FILE_BUCKET_NAME incognito-file-bucket-storage
 
 # Description:
 #   # String
@@ -24,15 +29,22 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Description: Handler for text processing
-      Handler: app.lambda_handler
+      Handler: app.text_process_handler
       CodeUri: src/
       Runtime: python3.8
       Events:
-        GetText:
+        S3Upload:
+          Type: S3
+          Properties:
+            Bucket: !Ref FileStorageBucket
+            Events: s3:ObjectCreated:*
+        ApiCall:
           Type: Api
           Properties:
             Path: /processText
             Method: get
+            
+  
   UploadPdfApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -40,6 +52,7 @@ Resources:
       Name: Upload PDF
       BinaryMediaTypes:
         ['application/pdf']
+  
   UploadPdfFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -54,9 +67,11 @@ Resources:
             RestApiId: !Ref UploadPdfApi
             Path: /uploadPdf
             Method: PUT
+  
   FileStorageBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: incognito-file-storage-bucket
+      BucketName: *FILE_BUCKET_NAME
+
 # Outputs:
   # set of outputs

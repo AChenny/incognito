@@ -8,6 +8,7 @@ ptvsd.wait_for_attach()
 # External libraries
 import json
 import base64
+import os
 from uuid import uuid4
 
 # Internal libraries
@@ -15,9 +16,9 @@ import bucketHelper
 import textProcessHelper
 
 # Constants
-BUCKET_NAME = 'incognito-file-storage-bucket' # Change this to your bucket name
+BUCKET_NAME = os.environ['FILE_BUCKET_NAME']
 
-def lambda_handler(event, context):
+def text_process_handler(event, context):
     # Extract text from pdf
     jobId = textProcessHelper.startJob(BUCKET_NAME, TEST_RESUME_FILENAME)
     print("Started job with id: {}".format(jobId))
