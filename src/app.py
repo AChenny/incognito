@@ -1,3 +1,4 @@
+# Debugger Initialization. These lines are needed to be able to debug an api locally on vscode
 import ptvsd
 
 # Enable ptvsd on 0.0.0.0 address and on port 5890 that we'll connect later with our IDE
@@ -6,6 +7,8 @@ ptvsd.wait_for_attach()
 
 # External libraries
 import json
+import base64
+from uuid import uuid4
 
 # Internal libraries
 import bucketHelper
@@ -13,7 +16,6 @@ import textProcessHelper
 
 # Constants
 BUCKET_NAME = 'incognito-file-storage-bucket' # Change this to your bucket name
-TEST_RESUME_FILENAME = 'Resume.pdf'
 
 def lambda_handler(event, context):
     # Extract text from pdf
@@ -31,9 +33,33 @@ def lambda_handler(event, context):
     }
 
 def upload_handler(event, context):
+    # If the body is empty, throw an error
+    if event['body'] is None:
+        return {
+            "statusCode": 401,
+            "body": json.dumps({
+            "message": "Could not find file in event body."
+            }),   
+        }
+    
+    # Converts the base64 document to byte like string
+    document = base64.b64decode(event['body'])
+    
+    metadata = {
+        'first_name': event['headers']['First-Name'],
+        'last_name': event['headers']['Last-Name']
+    }
+
+    # Generate a unique document key
+    unique_id = str(uuid4())
+    generated_document_key = metadata['first_name'] + metadata['last_name'] + '_' + unique_id + '.pdf'
+
+    bucketHelper.upload_file_to_bucket(BUCKET_NAME, generated_document_key, document, metadata)
+
     return {
         "statusCode": 200,
         "body": json.dumps({
-            "message": "Successful request."
+            "message": "Successful Upload.",
+            "s3-object-key": generated_document_key
         }),       
     }

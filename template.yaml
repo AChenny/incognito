@@ -33,6 +33,13 @@ Resources:
           Properties:
             Path: /processText
             Method: get
+  UploadPdfApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Name: Upload PDF
+      BinaryMediaTypes:
+        ['application/pdf']
   UploadPdfFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -44,8 +51,9 @@ Resources:
         UploadPdf:
           Type: Api
           Properties:
+            RestApiId: !Ref UploadPdfApi
             Path: /uploadPdf
-            Method: put
+            Method: PUT
   FileStorageBucket:
     Type: AWS::S3::Bucket
     Properties:
