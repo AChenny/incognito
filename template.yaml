@@ -6,7 +6,8 @@ Globals:
     Environment:
       Variables:
         # Change this to the bucket name of where you want to store your files
-        FILE_BUCKET_NAME: &FILE_BUCKET_NAME incognito-file-bucket-storage
+        INPUT_FILE_BUCKET: &INPUT_FILE_BUCKET incognito-input-files
+        OUTPUT_FILE_BUCKET: &OUTPUT_FILE_BUCKET incognito-output-files
 
 # Description:
 #   # String
@@ -32,18 +33,21 @@ Resources:
       Handler: app.text_process_handler
       CodeUri: src/
       Runtime: python3.8
+      Timeout: 10
+      Policies:
+        # Give function full S3 Access
+        - AmazonS3FullAccess
       Events:
-        S3Upload:
-          Type: S3
-          Properties:
-            Bucket: !Ref FileStorageBucket
-            Events: s3:ObjectCreated:*
         ApiCall:
           Type: Api
           Properties:
             Path: /processText
             Method: get
-            
+        S3Upload:
+          Type: S3
+          Properties:
+            Bucket: !Ref InputBucket
+            Events: s3:ObjectCreated:Put
   
   UploadPdfApi:
     Type: AWS::Serverless::Api
@@ -60,6 +64,10 @@ Resources:
       Handler: app.upload_handler
       CodeUri: src/
       Runtime: python3.8
+      Timeout: 30
+      Policies:
+        # Give function full S3 Access
+        - AmazonS3FullAccess
       Events:
         UploadPdf:
           Type: Api
@@ -68,10 +76,16 @@ Resources:
             Path: /uploadPdf
             Method: PUT
   
-  FileStorageBucket:
+  InputBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: *FILE_BUCKET_NAME
+      BucketName: *INPUT_FILE_BUCKET
+
+  OutputBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: *OUTPUT_FILE_BUCKET
+      
 
 # Outputs:
   # set of outputs

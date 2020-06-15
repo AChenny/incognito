@@ -4,3 +4,4 @@ TestFiles/
 Pipfile.lock
 .aws/
 .vscode/
+credentials-for-AWS.csv
