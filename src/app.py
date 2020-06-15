@@ -1,13 +1,12 @@
 # Debugger Initialization. These lines are needed to be able to debug an api locally on vscode
-import ptvsd
-
-# Enable ptvsd on 0.0.0.0 address and on port 5890 that we'll connect later with our IDE
-ptvsd.enable_attach(address=('0.0.0.0', 5890), redirect_output=True)
-ptvsd.wait_for_attach()
+# import ptvsd
+# ptvsd.enable_attach(address=('0.0.0.0', 5890), redirect_output=True)
+# ptvsd.wait_for_attach()
 
 # External libraries
 import json
 import base64
+import os
 from uuid import uuid4
 
 # Internal libraries
@@ -15,15 +14,16 @@ import bucketHelper
 import textProcessHelper
 
 # Constants
-BUCKET_NAME = 'incognito-file-storage-bucket' # Change this to your bucket name
+OUTPUT_BUCKET_NAME = os.environ['OUTPUT_FILE_BUCKET']
 
-def lambda_handler(event, context):
-    # Extract text from pdf
-    jobId = textProcessHelper.startJob(BUCKET_NAME, TEST_RESUME_FILENAME)
-    print("Started job with id: {}".format(jobId))
+def text_process_handler(event, context):
+    # # Extract text from pdf
+    # jobId = textProcessHelper.startJob(BUCKET_NAME, TEST_RESUME_FILENAME)
+    # print("Started job with id: {}".format(jobId))
 
-    if (textProcessHelper.isJobComplete(jobId)):
-        response = textProcessHelper.getJobResults(jobId)
+    # if (textProcessHelper.isJobComplete(jobId)):
+    #     response = textProcessHelper.getJobResults(jobId)
+    bucketHelper.upload_file_to_bucket(OUTPUT_BUCKET_NAME, 'Success.txt', 'Success.')
 
     return {
         "statusCode": 200,
@@ -61,5 +61,5 @@ def upload_handler(event, context):
         "body": json.dumps({
             "message": "Successful Upload.",
             "s3-object-key": generated_document_key
-        }),       
+        }),
     }

@@ -1,7 +1,13 @@
 Transform: AWS::Serverless-2016-10-31
 
-# Globals:
-#   # set of globals
+Globals:
+  # set of globals
+  Function:
+    Environment:
+      Variables:
+        # Change this to the bucket name of where you want to store your files
+        INPUT_FILE_BUCKET: &INPUT_FILE_BUCKET incognito-input-files
+        OUTPUT_FILE_BUCKET: &OUTPUT_FILE_BUCKET incognito-output-files
 
 # Description:
 #   # String
@@ -24,15 +30,25 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Description: Handler for text processing
-      Handler: app.lambda_handler
+      Handler: app.text_process_handler
       CodeUri: src/
       Runtime: python3.8
+      Timeout: 10
+      Policies:
+        # Give function full S3 Access
+        - AmazonS3FullAccess
       Events:
-        GetText:
+        ApiCall:
           Type: Api
           Properties:
             Path: /processText
             Method: get
+        S3Upload:
+          Type: S3
+          Properties:
+            Bucket: !Ref InputBucket
+            Events: s3:ObjectCreated:Put
+  
   UploadPdfApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -40,6 +56,7 @@ Resources:
       Name: Upload PDF
       BinaryMediaTypes:
         ['application/pdf']
+  
   UploadPdfFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -47,6 +64,10 @@ Resources:
       Handler: app.upload_handler
       CodeUri: src/
       Runtime: python3.8
+      Timeout: 30
+      Policies:
+        # Give function full S3 Access
+        - AmazonS3FullAccess
       Events:
         UploadPdf:
           Type: Api
@@ -54,9 +75,17 @@ Resources:
             RestApiId: !Ref UploadPdfApi
             Path: /uploadPdf
             Method: PUT
-  FileStorageBucket:
+  
+  InputBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: incognito-file-storage-bucket
+      BucketName: *INPUT_FILE_BUCKET
+
+  OutputBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: *OUTPUT_FILE_BUCKET
+      
+
 # Outputs:
   # set of outputs
