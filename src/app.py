@@ -1,7 +1,7 @@
 # Debugger Initialization. These lines are needed to be able to debug an api locally on vscode
-# import ptvsd
-# ptvsd.enable_attach(address=('0.0.0.0', 5890), redirect_output=True)
-# ptvsd.wait_for_attach()
+import ptvsd
+ptvsd.enable_attach(address=('0.0.0.0', 5890), redirect_output=True)
+ptvsd.wait_for_attach()
 
 # External libraries
 import json
@@ -14,6 +14,7 @@ import bucketHelper
 import textProcessHelper
 
 # Constants
+INPUT_BUCKET_NAME = os.environ['INPUT_FILE_BUCKET']
 OUTPUT_BUCKET_NAME = os.environ['OUTPUT_FILE_BUCKET']
 
 def text_process_handler(event, context):
@@ -54,7 +55,7 @@ def upload_handler(event, context):
     unique_id = str(uuid4())
     generated_document_key = metadata['first_name'] + metadata['last_name'] + '_' + unique_id + '.pdf'
 
-    bucketHelper.upload_file_to_bucket(BUCKET_NAME, generated_document_key, document, metadata)
+    bucketHelper.upload_file_to_bucket(INPUT_BUCKET_NAME, generated_document_key, document, metadata)
 
     return {
         "statusCode": 200,
