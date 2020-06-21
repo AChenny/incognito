@@ -16,6 +16,7 @@ import bucketHelper
 import textProcessHelper
 
 # Constants
+INPUT_BUCKET_NAME = os.environ['INPUT_FILE_BUCKET']
 OUTPUT_BUCKET_NAME = os.environ['OUTPUT_FILE_BUCKET']
 INPUT_BUCKET_NAME = os.environ['INPUT_FILE_BUCKET']
 
