@@ -18,7 +18,6 @@ import textProcessHelper
 # Constants
 INPUT_BUCKET_NAME = os.environ['INPUT_FILE_BUCKET']
 OUTPUT_BUCKET_NAME = os.environ['OUTPUT_FILE_BUCKET']
-INPUT_BUCKET_NAME = os.environ['INPUT_FILE_BUCKET']
 
 def text_process_handler(event, context):
     # Test to check if poppler works, if this request passes, then poppler and pdf2image is working
