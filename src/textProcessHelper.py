@@ -67,3 +67,17 @@ def getJobResults(jobId):
 
     return pages
 
+
+# Description: Synchronous detection of document text
+# Input: Bytes of the document (JPEG or PNG format)
+# Output: Block object with all the data in a mapping -> refer to https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/textract.html
+def get_document_text(imageBytes):
+    client = boto3('textract')
+
+    documentObject = {
+        'Bytes': imageBytes
+    }
+
+    response = client.detect_document_text(Document=documentObject)
+
+    return response

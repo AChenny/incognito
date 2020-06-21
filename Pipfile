@@ -8,6 +8,7 @@ ptvsd = "*"
 
 [packages]
 boto3 = "*"
+pdf2image = "*"
 
 [requires]
 python_version = "3.8"
