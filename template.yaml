@@ -37,45 +37,35 @@ Resources:
       Policies:
         # Give function full S3 Access
         - AmazonS3FullAccess
+      Layers:
+        - !Ref PopplerLayer
       Events:
         ApiCall:
           Type: Api
           Properties:
+            RestApiId: !Ref TextProcessApi
             Path: /processText
-            Method: get
+            Method: put
         S3Upload:
           Type: S3
           Properties:
             Bucket: !Ref InputBucket
             Events: s3:ObjectCreated:Put
   
-  UploadPdfApi:
+  PopplerLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes: [python3.6, python3.7, python3.8]
+      ContentUri: poppler/package.zip
+  
+  TextProcessApi:
     Type: AWS::Serverless::Api
     Properties:
       StageName: Prod
-      Name: Upload PDF
+      Name: Text Process
       BinaryMediaTypes:
-        ['application/pdf']
-  
-  UploadPdfFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      Description: Handler for uploading a pdf
-      Handler: app.upload_handler
-      CodeUri: src/
-      Runtime: python3.8
-      Timeout: 30
-      Policies:
-        # Give function full S3 Access
-        - AmazonS3FullAccess
-      Events:
-        UploadPdf:
-          Type: Api
-          Properties:
-            RestApiId: !Ref UploadPdfApi
-            Path: /uploadPdf
-            Method: PUT
-  
+        ['application/pdf', image/png, image/jpeg]
+
   InputBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -86,6 +76,5 @@ Resources:
     Properties:
       BucketName: *OUTPUT_FILE_BUCKET
       
-
 # Outputs:
   # set of outputs

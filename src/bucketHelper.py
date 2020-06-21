@@ -4,7 +4,7 @@ import boto3
 # Description: Gets the metadata from an object in the bucket
 # Input: Bucket name, key of the object
 # Output: TODO: Metadata in json format(?)
-def getMetadata(bucketName, key):
+def get_metadata(bucketName, key):
     client = boto3.client('s3')
     response = client.get_object(
     Bucket=bucketName,
@@ -25,3 +25,14 @@ def upload_file_to_bucket(bucketName, key, content, metadata={}):
         Key = key,
         Metadata = metadata
     )
+
+# Description: Gets the binary data from an object in the bucket
+# Input: Bucket name, key name
+# Output: Bytes
+def get_bucket_object(bucketName, objectKey):
+    client = boto3.client('s3')
+    response = client.get_object(
+        Bucket=bucketName,
+        Key=objectKey
+    )
+    return response['Body'].read()
