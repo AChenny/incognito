@@ -33,7 +33,7 @@ Resources:
       Handler: app.text_process_handler
       CodeUri: src/
       Runtime: python3.8
-      Timeout: 10
+      Timeout: 30
       Policies:
         # Give function full S3 Access
         - AmazonS3FullAccess

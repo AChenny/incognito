@@ -9,20 +9,33 @@ import json
 import base64
 import os
 from uuid import uuid4
-from pdf2image import convert_from_bytes
 
 # Internal libraries
 import bucketHelper
 import textProcessHelper
+import imageHelper
 
 # Constants
 INPUT_BUCKET_NAME = os.environ['INPUT_FILE_BUCKET']
 OUTPUT_BUCKET_NAME = os.environ['OUTPUT_FILE_BUCKET']
 
 def text_process_handler(event, context):
-    # Test to check if poppler works, if this request passes, then poppler and pdf2image is working
-    document = bucketHelper.get_bucket_object('incognito-input-files', 'Resume.pdf')
-    images = convert_from_bytes(document,dpi=150)
+    # Converts the base64 document to byte-like string
+    pdfDocument = base64.b64decode(event['body'])
+
+    # Convert the pdf to a png image
+    image = imageHelper.convert_pdf_to_image(pdfDocument)
+
+    # Generate a unique key using random numbers
+    metadata = {
+        'first_name': event['headers']['First-Name'],
+        'last_name': event['headers']['Last-Name']
+    }
+    unique_id = str(uuid4())
+    generated_document_key = metadata['first_name'] + metadata['last_name'] + '_' + unique_id + '.png'
+
+    # Upload the image to s3 bucket
+    bucketHelper.upload_file_to_bucket(OUTPUT_BUCKET_NAME, generated_document_key, image)
 
     return {
         "statusCode": 200,
