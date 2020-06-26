@@ -32,11 +32,12 @@ Resources:
       Description: Handler for text processing
       Handler: app.text_process_handler
       CodeUri: src/
-      Runtime: python3.8
-      Timeout: 10
+      Runtime: python3.7
+      Timeout: 60
       Policies:
         # Give function full S3 Access
         - AmazonS3FullAccess
+        - AmazonTextractFullAccess
       Layers:
         - !Ref PopplerLayer
       Events:

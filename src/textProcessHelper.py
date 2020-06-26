@@ -67,12 +67,11 @@ def getJobResults(jobId):
 
     return pages
 
-
 # Description: Synchronous detection of document text
 # Input: Bytes of the document (JPEG or PNG format)
 # Output: Block object with all the data in a mapping -> refer to https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/textract.html
 def get_document_text(imageBytes):
-    client = boto3('textract')
+    client = boto3.client('textract')
 
     documentObject = {
         'Bytes': imageBytes
@@ -81,3 +80,32 @@ def get_document_text(imageBytes):
     response = client.detect_document_text(Document=documentObject)
 
     return response
+
+# Description: Get bounding box locations from string
+# Input: Block object from textract response and filter list
+# Output: Bounding box location as an array (x1, y1, x2, y2)
+def get_bounding_box_locations(blockObject, filters, imageWidth, imageHeight):
+    blocks = blockObject['Blocks']
+    boundingBoxes = []
+
+    # Loop through all filters to get bounding boxes for each one
+    for filter in filters:
+        for block in blocks:
+            if 'Text' in block:
+                if filter in block['Text']:
+                    x1 = block['Geometry']['Polygon'][0]["X"] * imageWidth
+                    y1 = block['Geometry']['Polygon'][0]["Y"] * imageHeight
+
+                    x2 = block['Geometry']['Polygon'][2]["X"] * imageWidth
+                    y2 = block['Geometry']['Polygon'][2]["Y"] * imageHeight
+
+                    coordinates = {
+                        'x1' : x1,
+                        'y1' : y1,
+                        'x2' : x2,
+                        'y2' : y2,
+                    }
+
+                    boundingBoxes.append(coordinates)
+
+    return boundingBoxes

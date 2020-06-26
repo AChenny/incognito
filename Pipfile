@@ -5,10 +5,12 @@ verify_ssl = true
 
 [dev-packages]
 ptvsd = "*"
+rope = "*"
 
 [packages]
 boto3 = "*"
 pdf2image = "*"
+pillow = "*"
 
 [requires]
 python_version = "3.8"
