@@ -19,6 +19,7 @@ import imageHelper
 INPUT_BUCKET_NAME = os.environ['INPUT_FILE_BUCKET']
 OUTPUT_BUCKET_NAME = os.environ['OUTPUT_FILE_BUCKET']
 
+# Description: Handler for processing a document
 def text_process_handler(event, context):
     metadata = {
         'first_name': event['headers']['First-Name'],

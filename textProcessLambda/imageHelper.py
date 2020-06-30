@@ -17,7 +17,7 @@ def convert_object_to_image_string(imageObject):
 # TODO: Update this to handle more than 1 image
 # Description: Convert a pdf image to PIL object
 # Input: PDF byte string
-# Output PIL object
+# Output: PIL object
 def get_image_object_from_pdf(pdfDocument):
     images = pdf2image.convert_from_bytes(pdfDocument, dpi=200, fmt='png')
     return images[0]

@@ -26,12 +26,21 @@ Globals:
 
 Resources:
   # set of resources
+  UploadDocumentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Handler for spinning up a host site and invoking text processing lambda
+      Handler: app.upload_handler
+      CodeUri: uploadLambda/
+      Runtime: python3.7
+      Timeout: 30
+
   TextProcessFunction:
     Type: AWS::Serverless::Function
     Properties:
       Description: Handler for text processing
       Handler: app.text_process_handler
-      CodeUri: src/
+      CodeUri: textProcessLambda/
       Runtime: python3.7
       Timeout: 60
       Policies:
